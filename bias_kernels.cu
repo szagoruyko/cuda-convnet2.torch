@@ -4,7 +4,24 @@
 #include <algorithm>
 #include "helper_cuda.h"
 
+
+__global__ void add(float* output, float* bias, int n)
+{
+  int ti = blockIdx.x*blockDim.x + threadIdx.x;
+
+  if(ti >= n)
+    return;
+
+  output[ti] = bias[0];
+}
+
 extern "C" {
+
+  void addLinearBias(THCudaTensor* output, THCudaTensor* bias)
+  {
+    int n = output->size[0];
+    add<<< DIVUP(n,128), 128 >>> (THCudaTensor_data(output), THCudaTensor_data(bias), n);
+  }
   
   void addBias(THCudaTensor* output, THCudaTensor* bias) {
     int width = output->size[1];

@@ -1,6 +1,8 @@
 local ffi = require 'ffi'
 
 ffi.cdef[[
+void addLinearBias(THCudaTensor* output, THCudaTensor* bias);
+
 void convFilterActs(THCudaTensor* images, THCudaTensor* filters, THCudaTensor* targets,
                     int imgSizeY, int numModulesY, int numModulesX, 
                     int paddingStart, int moduleStride,
